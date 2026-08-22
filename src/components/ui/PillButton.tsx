@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react'
+import { cn } from '@/lib/utils'
 
 interface PillButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost'
@@ -10,15 +11,14 @@ const variants: Record<string, string> = {
   ghost: 'bg-transparent text-ink border border-muted/30 hover:bg-black/5',
 }
 
-export function PillButton({
-  variant = 'primary',
-  className = '',
-  disabled,
-  ...props
-}: PillButtonProps) {
+export function PillButton({ variant = 'primary', className, disabled, ...props }: PillButtonProps) {
   return (
     <button
-      className={`rounded-pill px-6 py-3 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${className}`}
+      className={cn(
+        'rounded-pill px-6 py-3 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+        variants[variant],
+        className,
+      )}
       disabled={disabled}
       {...props}
     />

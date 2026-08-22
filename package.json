@@ -15,10 +15,12 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@supabase/supabase-js": "^2.112.3",
+    "clsx": "^2.1.1",
     "fastest-levenshtein": "^1.0.16",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
+    "tailwind-merge": "^3.6.0",
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
