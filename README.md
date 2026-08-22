@@ -19,11 +19,21 @@ npm run dev
 1. צרו פרויקט חינמי ב-[Supabase](https://supabase.com).
 2. תחת SQL Editor, הריצו את `supabase/schema.sql` (יוצר את כל הטבלאות ומדיניות ה-RLS).
 3. תחת Settings → API, העתיקו את ה-Project URL וה-`anon` key ל-`.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`), ואת ה-`service_role` key ל-`SUPABASE_SERVICE_ROLE_KEY` (לשימוש מקומי בלבד — לעולם לא לחשוף בצד לקוח).
-4. זרעו את מאגר הרכיבים הראשוני:
-   ```bash
-   npm run seed
-   ```
-   הסקריפט מוסיף (או מעדכן) כ-150 רכיבים נפוצים עם דירוגים. כל רכיב חדש שהמערכת נתקלת בו בזמן סריקה נוסף אוטומטית כ"טרם דורג" ומרחיב את המאגר עם הזמן.
+4. זרעו את מאגר הרכיבים הראשוני. שתי דרכים שקולות:
+   - **עם טרמינל**: `npm run seed`
+   - **בלי טרמינל (גם מהנייד)**: פתחו את `supabase/seed/ingredients-seed.sql`, העתיקו את כל התוכן, והדביקו/הריצו אותו ב-SQL Editor של Supabase (בדפדפן, אותו מקום שהרצתם בו את `schema.sql`). לא דורש את ה-`service_role` key בכלל.
+
+   כל רכיב חדש שהמערכת נתקלת בו בזמן סריקה נוסף אוטומטית כ"טרם דורג" ומרחיב את המאגר עם הזמן.
+
+## הרצה מהטלפון בלי טרמינל בכלל
+
+כל השלבים למעלה (יצירת פרויקט Supabase, הרצת ה-SQL, קבלת ה-URL וה-`anon` key) אפשריים מדפדפן בנייד — Supabase הוא אתר רגיל. השלב שדורש מחשב/טרמינל הוא רק כתיבת קוד; להרצה חיה בלי טרמינל בכלל:
+
+1. ודאו שהוקם הפרויקט ב-Supabase והורצו `schema.sql` ו-`ingredients-seed.sql` כמו למעלה (מדפדפן).
+2. בריפו ב-GitHub (גם מהנייד): **Settings → Secrets and variables → Actions** → הוסיפו שני secrets: `VITE_SUPABASE_URL` ו-`VITE_SUPABASE_ANON_KEY` עם הערכים מ-Supabase (Settings → API).
+3. **Settings → Pages** → תחת Source בחרו **GitHub Actions**.
+4. ודאו שה-PR של הענף מוזג ל-`main` (זה מפעיל את ה-workflow שבונה ומפרסם את האתר אוטומטית).
+5. פתחו בנייד את `https://<username>.github.io/Skincare-Analysis/` — האתר האמיתי, כולל מסך התחברות/הרשמה תקין, כי הוא כבר מחובר ל-Supabase שלכם.
 
 ## פריסה ל-GitHub Pages
 
