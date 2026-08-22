@@ -12,6 +12,8 @@ cp .env.example .env   # מלאו VITE_SUPABASE_URL ו-VITE_SUPABASE_ANON_KEY
 npm run dev
 ```
 
+**טיפ לפיתוח**: כדי לדלג על מסך ההתחברות בכל טעינה מקומית, הירשמו פעם אחת עם משתמש בדיקה ואז מלאו את `VITE_DEV_AUTO_LOGIN_EMAIL`/`VITE_DEV_AUTO_LOGIN_PASSWORD` ב-`.env` — האפליקציה תתחבר איתו אוטומטית ב-`npm run dev` בלבד. זה לא פעיל ב-build לפרודקשן (`npm run build`), כך שב-GitHub Pages תמיד מוצג מסך ההתחברות האמיתי.
+
 ## הקמת Supabase (חד-פעמי)
 
 1. צרו פרויקט חינמי ב-[Supabase](https://supabase.com).
