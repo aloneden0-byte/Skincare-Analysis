@@ -2,11 +2,13 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useSession } from '@/lib/auth/useSession'
+import { useDevAutoLogin } from '@/lib/auth/useDevAutoLogin'
 import { Card } from '@/components/ui/Card'
 import { PillButton } from '@/components/ui/PillButton'
 
 export function Login() {
   const { user, loading: sessionLoading } = useSession()
+  const { attempting: autoLoginAttempting } = useDevAutoLogin()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,6 +17,14 @@ export function Login() {
 
   if (!sessionLoading && user) {
     return <Navigate to="/home" replace />
+  }
+
+  if (autoLoginAttempting) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted">
+        מתחבר אוטומטית (מצב פיתוח)...
+      </div>
+    )
   }
 
   async function handleSubmit(e: FormEvent) {
