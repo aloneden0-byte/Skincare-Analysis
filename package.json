@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "seed": "tsx supabase/seed/run-seed.ts"
+    "seed": "tsx supabase/seed/run-seed.ts",
+    "enrich": "node scripts/enrich-ingredients.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
