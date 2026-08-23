@@ -8,12 +8,23 @@ import { PillButton } from '@/components/ui/PillButton'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { ScoreBreakdown } from '@/components/product/ScoreBreakdown'
+import { ScoreExplanation } from '@/components/product/ScoreExplanation'
+import { PersonalFitCard } from '@/components/product/PersonalFitCard'
 import { IngredientRow } from '@/components/product/IngredientRow'
 import { useSession } from '@/lib/auth/useSession'
 import { getProduct, getProductIngredients, getProductSkinFit } from '@/lib/data/products'
 import { addProductToRoutine } from '@/lib/data/routines'
+import { getSkinProfile } from '@/lib/data/skinProfile'
 import { computeOverallScore } from '@/lib/scoring/product-score'
-import { PRODUCT_CATEGORIES, type Ingredient, type Product, type SkinFitResult } from '@/types'
+import { computePersonalFit } from '@/lib/scoring/personal-fit'
+import { explainScore } from '@/lib/scoring/explain'
+import {
+  PRODUCT_CATEGORIES,
+  type Ingredient,
+  type Product,
+  type SkinFitResult,
+  type SkinProfile,
+} from '@/types'
 
 interface LoadedIngredient {
   position: number
@@ -31,6 +42,7 @@ export function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [routineMessage, setRoutineMessage] = useState<string | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [skinProfile, setSkinProfile] = useState<SkinProfile | null>(null)
   const confettiFired = useRef(false)
 
   useEffect(() => {
@@ -39,15 +51,17 @@ export function ProductDetail() {
 
     async function load() {
       setLoading(true)
-      const [p, pi, sf] = await Promise.all([
+      const [p, pi, sf, profile] = await Promise.all([
         getProduct(productId!),
         getProductIngredients(productId!),
         getProductSkinFit(productId!),
+        user ? getSkinProfile(user.id) : Promise.resolve(null),
       ])
       if (cancelled) return
       setProduct(p)
       setIngredients(pi.map((row) => ({ position: row.position, ingredient: row.ingredient! })))
       setSkinFit(sf)
+      setSkinProfile(profile)
       setLoading(false)
 
       if (!confettiFired.current && (p?.overall_score ?? 0) >= CELEBRATION_SCORE_THRESHOLD) {
@@ -65,7 +79,7 @@ export function ProductDetail() {
     return () => {
       cancelled = true
     }
-  }, [productId])
+  }, [productId, user])
 
   async function handleAddToRoutine(type: 'morning' | 'evening') {
     if (!user || !product) return
@@ -90,10 +104,13 @@ export function ProductDetail() {
   }
 
   const categoryLabel = PRODUCT_CATEGORIES.find((c) => c.value === product.category)?.label
+  const orderedIngredients = ingredients.map((i) => i.ingredient)
   const { highIrritantWarning, dataConfidence } = computeOverallScore(
-    ingredients.map((i) => i.ingredient),
+    orderedIngredients,
     product.category,
   )
+  const personalFit = computePersonalFit(orderedIngredients, product.category, skinProfile)
+  const explanation = explainScore(orderedIngredients, product.category)
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -110,6 +127,10 @@ export function ProductDetail() {
           dataConfidence={dataConfidence}
         />
       </Card>
+
+      <PersonalFitCard fit={personalFit} />
+
+      <ScoreExplanation explanation={explanation} />
 
       <PillButton className="w-full" onClick={() => setSheetOpen(true)}>
         הוספה לשגרה

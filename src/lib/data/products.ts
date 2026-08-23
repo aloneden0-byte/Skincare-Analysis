@@ -1,5 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import type { ParsedIngredientMatch, Product, ProductCategory, SkinFitResult } from '@/types'
+import type {
+  Ingredient,
+  ParsedIngredientMatch,
+  Product,
+  ProductCategory,
+  SkinFitResult,
+} from '@/types'
 import { hashIngredientSequence } from '@/lib/ingredients/hash'
 import { computeOverallScore } from '@/lib/scoring/product-score'
 import { computeSkinFit } from '@/lib/scoring/skin-fit'
@@ -105,6 +111,36 @@ export async function getProductIngredients(productId: string) {
     .order('position', { ascending: true })
   if (error) throw new Error(error.message)
   return data ?? []
+}
+
+/**
+ * Ingredients for several products in one round trip, keyed by product id and
+ * kept in INCI order. Routine analysis needs every product's full ingredient
+ * list at once, and querying them one at a time would mean a request per
+ * product on a page that already loads slowly on mobile data.
+ */
+export async function getIngredientsForProducts(
+  productIds: string[],
+): Promise<Map<string, Ingredient[]>> {
+  const byProduct = new Map<string, Ingredient[]>()
+  if (productIds.length === 0) return byProduct
+
+  const { data, error } = await supabase
+    .from('product_ingredients')
+    .select('product_id, position, ingredient:ingredients(*)')
+    .in('product_id', productIds)
+    .order('position', { ascending: true })
+  if (error) throw new Error(error.message)
+
+  for (const row of data ?? []) {
+    const ingredient = row.ingredient as unknown as Ingredient | null
+    if (!ingredient) continue
+    const list = byProduct.get(row.product_id) ?? []
+    list.push(ingredient)
+    byProduct.set(row.product_id, list)
+  }
+
+  return byProduct
 }
 
 export async function getProductSkinFit(productId: string): Promise<SkinFitResult[]> {
