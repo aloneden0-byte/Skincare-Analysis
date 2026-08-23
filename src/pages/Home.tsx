@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
-import { PillButton } from '@/components/ui/PillButton'
+import { ShimmerButton } from '@/components/ui/shimmer-button'
 import { useSession } from '@/lib/auth/useSession'
 import { getRoutine, getRoutineItems } from '@/lib/data/routines'
 
 export function Home() {
   const { user } = useSession()
+  const navigate = useNavigate()
   const [morningCount, setMorningCount] = useState<number | null>(null)
   const [eveningCount, setEveningCount] = useState<number | null>(null)
 
@@ -48,20 +49,26 @@ export function Home() {
             נבדוק את רשימת הרכיבים ונמצא את הציון וההתאמה עבורכם
           </p>
         </div>
-        <Link to="/scan">
-          <PillButton className="bg-white text-primary hover:bg-white/90">התחלת סריקה</PillButton>
-        </Link>
+        <ShimmerButton
+          onClick={() => navigate('/scan')}
+          background="#ffffff"
+          shimmerColor="#7c5cfc"
+          borderRadius="9999px"
+          className="text-primary font-medium shadow-none"
+        >
+          התחלת סריקה
+        </ShimmerButton>
       </Card>
 
       <div className="grid grid-cols-2 gap-4">
-        <Link to="/routines">
+        <Link to="/routines" className="transition-transform active:scale-95 hover:-translate-y-0.5">
           <Card className="text-center">
             <p className="text-sm text-muted">שגרת בוקר</p>
             <p className="mt-1 text-2xl font-bold text-primary">{morningCount ?? '—'}</p>
             <p className="text-xs text-muted">מוצרים</p>
           </Card>
         </Link>
-        <Link to="/routines">
+        <Link to="/routines" className="transition-transform active:scale-95 hover:-translate-y-0.5">
           <Card className="text-center">
             <p className="text-sm text-muted">שגרת ערב</p>
             <p className="mt-1 text-2xl font-bold text-primary">{eveningCount ?? '—'}</p>

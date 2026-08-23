@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Link } from 'react-router-dom'
+import { Sparkles } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { PRODUCT_CATEGORIES, type Product } from '@/types'
@@ -88,7 +89,12 @@ export function RoutineList({
   }
 
   if (items.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted">אין עדיין מוצרים בשגרה הזו.</p>
+    return (
+      <div className="flex flex-col items-center gap-2 py-8 text-muted">
+        <Sparkles size={28} />
+        <p className="text-sm">אין עדיין מוצרים בשגרה הזו.</p>
+      </div>
+    )
   }
 
   return (

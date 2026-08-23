@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { useSession } from '@/lib/auth/useSession'
 import { ensureRoutines } from '@/lib/data/routines'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { BottomNav } from './BottomNav'
 
 export function AppShell() {
@@ -13,8 +14,8 @@ export function AppShell() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-muted">
-        טוען...
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSpinner />
       </div>
     )
   }
