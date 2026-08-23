@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Sun, Moon, Sparkles } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { ShimmerButton } from '@/components/ui/shimmer-button'
 import { useSession, getDisplayName } from '@/lib/auth/useSession'
@@ -35,14 +36,23 @@ export function Home() {
     }
   }, [user])
 
+  const name = getDisplayName(user)
+  const initial = name.trim().charAt(0).toUpperCase() || '?'
+
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div>
-        <p className="text-sm text-muted">שלום,</p>
-        <h1 className="text-xl font-bold text-ink">{getDisplayName(user)}</h1>
+      <div className="flex items-center gap-3">
+        <div className="flex size-11 items-center justify-center rounded-full bg-primary-light text-lg font-bold text-primary">
+          {initial}
+        </div>
+        <div>
+          <p className="text-sm text-muted">שלום,</p>
+          <h1 className="text-xl font-bold text-ink">{name}</h1>
+        </div>
       </div>
 
-      <Card className="flex flex-col items-center gap-4 bg-primary text-white">
+      <Card tone="primary" className="flex flex-col items-center gap-4">
+        <Sparkles size={26} className="text-white/90" />
         <div>
           <p className="text-center text-lg font-bold">סרקו מוצר טיפוח חדש</p>
           <p className="text-center text-sm text-white/80">
@@ -62,17 +72,25 @@ export function Home() {
 
       <div className="grid grid-cols-2 gap-4">
         <Link to="/routines" className="transition-transform active:scale-95 hover:-translate-y-0.5">
-          <Card className="text-center">
-            <p className="text-sm text-muted">שגרת בוקר</p>
-            <p className="mt-1 text-2xl font-bold text-primary">{morningCount ?? '—'}</p>
-            <p className="text-xs text-muted">מוצרים</p>
+          <Card tone="sun" className="flex flex-col gap-3">
+            <div className="flex size-9 items-center justify-center rounded-full bg-sun text-white">
+              <Sun size={18} />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-ink">{morningCount ?? '—'}</p>
+              <p className="text-sm text-ink/60">שגרת בוקר</p>
+            </div>
           </Card>
         </Link>
         <Link to="/routines" className="transition-transform active:scale-95 hover:-translate-y-0.5">
-          <Card className="text-center">
-            <p className="text-sm text-muted">שגרת ערב</p>
-            <p className="mt-1 text-2xl font-bold text-primary">{eveningCount ?? '—'}</p>
-            <p className="text-xs text-muted">מוצרים</p>
+          <Card tone="moon" className="flex flex-col gap-3">
+            <div className="flex size-9 items-center justify-center rounded-full bg-moon text-white">
+              <Moon size={18} />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-ink">{eveningCount ?? '—'}</p>
+              <p className="text-sm text-ink/60">שגרת ערב</p>
+            </div>
           </Card>
         </Link>
       </div>

@@ -41,6 +41,15 @@
   --color-destructive: #e11d48;
   --color-destructive-foreground: #ffffff;
 
+  /* Soft pastel accents for dashboard-style stat tiles (morning/sun,
+     evening/moon), alongside the purple brand color. */
+  --color-sun: #f59e0b;
+  --color-sun-light: #fef3d9;
+  --color-moon: #6366f1;
+  --color-moon-light: #e6e5fd;
+  --color-mint: #10b981;
+  --color-mint-light: #d7f7ea;
+
   --color-border: #e5e0f5;
   --color-input: #e5e0f5;
   --color-ring: #7c5cfc;
@@ -63,7 +72,7 @@
   --color-sidebar-ring: #7c5cfc;
 
   --radius: 0.85rem;
-  --radius-card: 1.5rem;
+  --radius-card: 1.75rem;
   --radius-pill: 9999px;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
