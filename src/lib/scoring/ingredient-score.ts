@@ -22,6 +22,20 @@ export function clamp(value: number, min: number, max: number): number {
  * Base 0-10 quality score for a single ingredient, dampened by the
  * product's category (rinse-off products care less about comedogenic/
  * irritancy penalties than leave-on products do).
+ *
+ * comedogenic_rating and irritancy_rating are 0-5 scales in the tradition
+ * of the Fulton/Kligman comedogenicity scale — the closest thing this
+ * field has to a standard, but a genuinely imperfect one: it was derived
+ * from ingredients tested near 100% concentration on rabbit-ear skin
+ * (more reactive than human facial skin), so ratings run conservative
+ * relative to how an ingredient behaves diluted into a real formula. We
+ * don't have per-ingredient real-world concentration data to correct for
+ * that directly, so the correction is structural instead: these ratings
+ * only ever apply at the position-weighted strength computed in
+ * product-score.ts, so a rated-as-comedogenic ingredient buried at the
+ * tail of a long INCI list (i.e. actually present at trace amounts)
+ * barely moves the final number, the same way its real-world risk would
+ * scale down at that concentration.
  */
 export function ingredientBaseScore(ingredient: Ingredient, category: ProductCategory): number {
   if (!ingredient.is_rated || ingredient.benefit_score == null) {

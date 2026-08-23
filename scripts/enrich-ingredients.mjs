@@ -55,6 +55,9 @@ const COMEDOGENIC_SENSITIVE_TAGS = ['acne-prone', 'oily']
 const IRRITANCY_SENSITIVE_TAGS = ['sensitive']
 const CONFLICT_PENALTY_FACTOR = 0.6
 const SKIN_FIT_TOP_N = 3
+const HIGH_IRRITANCY_THRESHOLD = 4
+const HIGH_IRRITANCY_POSITION_CUTOFF = 5
+const HIGH_IRRITANT_SCORE_CAP = 65
 
 function clampScore(value, min, max) {
   return Math.max(min, Math.min(max, value))
@@ -87,7 +90,14 @@ function computeOverallScore(ingredients, category) {
     (sum, ingredient, i) => sum + ingredientBaseScore(ingredient, category) * weights[i],
     0,
   )
-  return Math.round((weightedSum / 10) * 100)
+  const { irritancyWeight } = CATEGORY_PROFILES[category] ?? LEAVE_ON
+  const highIrritantWarning =
+    irritancyWeight >= 1 &&
+    ingredients
+      .slice(0, HIGH_IRRITANCY_POSITION_CUTOFF)
+      .some((ing) => (ing.irritancy_rating ?? 0) >= HIGH_IRRITANCY_THRESHOLD)
+  const rawScore = Math.round((weightedSum / 10) * 100)
+  return highIrritantWarning ? Math.min(rawScore, HIGH_IRRITANT_SCORE_CAP) : rawScore
 }
 
 function computeSkinFit(ingredients) {
