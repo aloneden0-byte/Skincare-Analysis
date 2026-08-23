@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import confetti from 'canvas-confetti'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { PillButton } from '@/components/ui/PillButton'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { ScoreBreakdown } from '@/components/product/ScoreBreakdown'
 import { IngredientRow } from '@/components/product/IngredientRow'
 import { useSession } from '@/lib/auth/useSession'
@@ -16,6 +18,8 @@ interface LoadedIngredient {
   ingredient: Ingredient
 }
 
+const CELEBRATION_SCORE_THRESHOLD = 85
+
 export function ProductDetail() {
   const { productId } = useParams<{ productId: string }>()
   const { user } = useSession()
@@ -24,6 +28,7 @@ export function ProductDetail() {
   const [skinFit, setSkinFit] = useState<SkinFitResult[]>([])
   const [loading, setLoading] = useState(true)
   const [routineMessage, setRoutineMessage] = useState<string | null>(null)
+  const confettiFired = useRef(false)
 
   useEffect(() => {
     if (!productId) return
@@ -41,6 +46,16 @@ export function ProductDetail() {
       setIngredients(pi.map((row) => ({ position: row.position, ingredient: row.ingredient! })))
       setSkinFit(sf)
       setLoading(false)
+
+      if (!confettiFired.current && (p?.overall_score ?? 0) >= CELEBRATION_SCORE_THRESHOLD) {
+        confettiFired.current = true
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.3 },
+          colors: ['#7c5cfc', '#8b5cf6', '#ede7fd', '#ffffff'],
+        })
+      }
     }
 
     load()
@@ -63,7 +78,7 @@ export function ProductDetail() {
   }
 
   if (loading) {
-    return <p className="py-10 text-center text-muted">טוען...</p>
+    return <LoadingSpinner label="טוען..." />
   }
 
   if (!product) {

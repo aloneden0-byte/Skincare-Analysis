@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSession } from '@/lib/auth/useSession'
 import { getRoutine, getRoutineItems, removeRoutineItem, reorderRoutineItems } from '@/lib/data/routines'
 import { RoutineList, type RoutineListItem } from '@/components/routines/RoutineList'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import type { RoutineType } from '@/types'
 
 const TABS: { type: RoutineType; label: string }[] = [
@@ -63,7 +64,7 @@ export function Routines() {
       </div>
 
       {loading ? (
-        <p className="py-8 text-center text-muted">טוען...</p>
+        <LoadingSpinner />
       ) : (
         <RoutineList items={items} onReorder={handleReorder} onRemove={handleRemove} />
       )}

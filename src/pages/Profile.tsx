@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
 import { PillButton } from '@/components/ui/PillButton'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useSession } from '@/lib/auth/useSession'
 import { getSkinProfile, saveSkinProfile } from '@/lib/data/skinProfile'
 import { supabase } from '@/lib/supabase'
@@ -55,7 +56,7 @@ export function Profile() {
     navigate('/login')
   }
 
-  if (loading) return <p className="py-10 text-center text-muted">טוען...</p>
+  if (loading) return <LoadingSpinner label="טוען..." />
 
   return (
     <div className="flex flex-col gap-6">
