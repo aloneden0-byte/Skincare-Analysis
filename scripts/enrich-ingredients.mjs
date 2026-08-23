@@ -7,7 +7,7 @@
  * ship these credentials to the browser bundle.
  *
  * Required env: VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY
- * Optional env: GEMINI_MODEL (default gemini-2.0-flash), ENRICH_BATCH_LIMIT
+ * Optional env: GEMINI_MODEL (default gemini-3.6-flash), ENRICH_BATCH_LIMIT
  * (default 15 — keeps each run comfortably inside the Gemini free tier;
  * a backlog is simply picked up across subsequent scheduled runs).
  */
@@ -19,7 +19,7 @@ config()
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash'
 const BATCH_LIMIT = Number(process.env.ENRICH_BATCH_LIMIT || 15)
 const REQUEST_DELAY_MS = 4000
 
@@ -149,6 +149,11 @@ async function main() {
   }
 
   console.log(`Done. ${succeeded} enriched, ${failed} failed.`)
+
+  if (unrated.length > 0 && succeeded === 0) {
+    console.error('Every ingredient failed — failing the run instead of reporting a false success.')
+    process.exit(1)
+  }
 }
 
 main()
