@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
-import type { Session } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+
+/** The name the user chose at signup, falling back to their email. */
+export function getDisplayName(user: User | null | undefined): string {
+  const name = user?.user_metadata?.display_name
+  return typeof name === 'string' && name.trim() ? name.trim() : (user?.email ?? '')
+}
 
 export function useSession() {
   const [session, setSession] = useState<Session | null>(null)

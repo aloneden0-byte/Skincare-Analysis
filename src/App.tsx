@@ -9,6 +9,7 @@ import { Categorize } from '@/pages/scan/Categorize'
 import { ProductDetail } from '@/pages/ProductDetail'
 import { Routines } from '@/pages/Routines'
 import { Profile } from '@/pages/Profile'
+import { Settings } from '@/pages/Settings'
 import { ScanFlowProvider } from '@/lib/scan/ScanFlowContext'
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
           />
           <Route path="/products/:productId" element={<ProductDetail />} />
           <Route path="/routines" element={<Routines />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
