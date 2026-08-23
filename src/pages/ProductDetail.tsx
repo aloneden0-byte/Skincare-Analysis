@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import confetti from 'canvas-confetti'
+import { Sun, Moon } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { PillButton } from '@/components/ui/PillButton'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { BottomSheet } from '@/components/ui/BottomSheet'
 import { ScoreBreakdown } from '@/components/product/ScoreBreakdown'
 import { IngredientRow } from '@/components/product/IngredientRow'
 import { useSession } from '@/lib/auth/useSession'
@@ -28,6 +30,7 @@ export function ProductDetail() {
   const [skinFit, setSkinFit] = useState<SkinFitResult[]>([])
   const [loading, setLoading] = useState(true)
   const [routineMessage, setRoutineMessage] = useState<string | null>(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const confettiFired = useRef(false)
 
   useEffect(() => {
@@ -68,6 +71,7 @@ export function ProductDetail() {
     if (!user || !product) return
     setRoutineMessage(null)
     const result = await addProductToRoutine(user.id, type, product.id)
+    setSheetOpen(false)
     setRoutineMessage(
       result === 'added'
         ? type === 'morning'
@@ -106,19 +110,35 @@ export function ProductDetail() {
         />
       </Card>
 
-      <div className="flex gap-3">
-        <PillButton className="flex-1" onClick={() => handleAddToRoutine('morning')}>
-          הוספה לשגרת בוקר
-        </PillButton>
-        <PillButton
-          variant="secondary"
-          className="flex-1"
-          onClick={() => handleAddToRoutine('evening')}
-        >
-          הוספה לשגרת ערב
-        </PillButton>
-      </div>
+      <PillButton className="w-full" onClick={() => setSheetOpen(true)}>
+        הוספה לשגרה
+      </PillButton>
       {routineMessage && <p className="text-center text-sm text-primary">{routineMessage}</p>}
+
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="הוספה לאיזו שגרה?">
+        <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => handleAddToRoutine('morning')}
+            className="flex items-center gap-3 rounded-2xl bg-sun-light p-4 text-right transition-transform active:scale-95"
+          >
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-sun text-white">
+              <Sun size={20} />
+            </div>
+            <span className="font-medium text-ink">שגרת בוקר</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleAddToRoutine('evening')}
+            className="flex items-center gap-3 rounded-2xl bg-moon-light p-4 text-right transition-transform active:scale-95"
+          >
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-moon text-white">
+              <Moon size={20} />
+            </div>
+            <span className="font-medium text-ink">שגרת ערב</span>
+          </button>
+        </div>
+      </BottomSheet>
 
       <Card>
         <h2 className="mb-2 font-bold text-ink">רשימת רכיבים ({ingredients.length})</h2>
