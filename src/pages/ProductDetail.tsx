@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { motion, useReducedMotion } from 'motion/react'
 import confetti from 'canvas-confetti'
 import { Sun, Moon } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
@@ -18,6 +19,7 @@ import { getSkinProfile } from '@/lib/data/skinProfile'
 import { computeOverallScore } from '@/lib/scoring/product-score'
 import { computePersonalFit } from '@/lib/scoring/personal-fit'
 import { explainScore } from '@/lib/scoring/explain'
+import { staggerContainer } from '@/lib/motion'
 import {
   PRODUCT_CATEGORIES,
   type Ingredient,
@@ -36,6 +38,7 @@ const CELEBRATION_SCORE_THRESHOLD = 85
 export function ProductDetail() {
   const { productId } = useParams<{ productId: string }>()
   const { user } = useSession()
+  const reduceMotion = useReducedMotion()
   const [product, setProduct] = useState<Product | null>(null)
   const [ingredients, setIngredients] = useState<LoadedIngredient[]>([])
   const [skinFit, setSkinFit] = useState<SkinFitResult[]>([])
@@ -70,7 +73,7 @@ export function ProductDetail() {
           particleCount: 100,
           spread: 70,
           origin: { y: 0.3 },
-          colors: ['#7c5cfc', '#8b5cf6', '#ede7fd', '#ffffff'],
+          colors: ['#7bc950', '#a5dc72', '#f6c445', '#4fc3a1', '#ffffff'],
         })
       }
     }
@@ -113,7 +116,7 @@ export function ProductDetail() {
   const explanation = explainScore(orderedIngredients, product.category)
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="flex flex-col gap-6">
       <div>
         <Badge tone="primary">{categoryLabel}</Badge>
         <h1 className="mt-2 text-xl font-bold text-ink">{product.name ?? 'מוצר סרוק'}</h1>
@@ -164,11 +167,16 @@ export function ProductDetail() {
 
       <Card>
         <h2 className="mb-2 font-bold text-ink">רשימת רכיבים ({ingredients.length})</h2>
-        <div>
+        <motion.div
+          variants={reduceMotion ? undefined : staggerContainer(0.04)}
+          initial={reduceMotion ? false : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.05 }}
+        >
           {ingredients.map(({ position, ingredient }) => (
             <IngredientRow key={ingredient.id} ingredient={ingredient} position={position} />
           ))}
-        </div>
+        </motion.div>
       </Card>
 
       <Link to="/scan" className="text-center text-sm text-primary">

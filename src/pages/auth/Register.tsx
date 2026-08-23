@@ -63,7 +63,7 @@ export function Register() {
                 required
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
                 autoComplete="name"
                 placeholder="איך נקרא לכם?"
               />
@@ -75,7 +75,7 @@ export function Register() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
                 autoComplete="email"
               />
             </div>
@@ -86,7 +86,7 @@ export function Register() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
                 autoComplete="new-password"
               />
             </div>
