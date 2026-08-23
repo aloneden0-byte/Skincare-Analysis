@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom'
+import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { springIndicator } from '@/lib/motion'
 
 interface IconProps {
   active: boolean
@@ -109,49 +111,60 @@ const links = [
 ]
 
 export function BottomNav() {
+  const reduceMotion = useReducedMotion()
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 rounded-t-3xl border-t border-border bg-surface shadow-nav">
-      <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
+    // Floating rather than edge-to-edge, per the design: the bar sits on the
+    // background as its own rounded object.
+    <nav className="fixed inset-x-0 bottom-0 z-20 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-md items-center justify-around rounded-[2rem] bg-surface px-2 py-2 shadow-nav">
         {links.map(({ to, label, icon: Icon, center }) => (
-          <NavLink key={to} to={to} className="flex flex-col items-center gap-1">
+          <NavLink key={to} to={to} className="flex flex-col items-center">
             {({ isActive }) =>
               center ? (
-                <div
-                  className={cn(
-                    'flex flex-col items-center gap-1 transition-transform duration-200',
-                    'active:scale-90',
-                  )}
+                <motion.div
+                  whileTap={reduceMotion ? undefined : { scale: 0.88 }}
+                  animate={reduceMotion ? undefined : { scale: isActive ? 1.06 : 1 }}
+                  transition={springIndicator}
+                  className="-mt-8 flex items-center justify-center rounded-full bg-primary p-4 text-white shadow-float"
                 >
-                  <div
-                    className={cn(
-                      '-mt-7 flex items-center justify-center rounded-full bg-primary p-3.5 text-white shadow-card transition-all duration-200',
-                      isActive
-                        ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface scale-105'
-                        : 'hover:scale-105',
-                    )}
-                  >
-                    <Icon active={isActive} />
-                  </div>
-                </div>
+                  <Icon active={isActive} />
+                </motion.div>
               ) : (
-                <div className="flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90">
-                  <div
-                    className={cn(
-                      'flex items-center justify-center rounded-2xl px-3 py-1.5 transition-colors duration-300 ease-out',
-                      isActive ? 'bg-primary-light text-primary' : 'text-muted',
+                <motion.div
+                  whileTap={reduceMotion ? undefined : { scale: 0.9 }}
+                  className="relative flex flex-col items-center gap-0.5 px-1"
+                >
+                  <div className="relative flex items-center justify-center px-3 py-1.5">
+                    {/* One element shared across all tabs: React keeps it
+                        mounted and motion tweens it between positions, so
+                        the pill physically travels to the tapped tab
+                        instead of blinking out of one and into another. */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-pill"
+                        transition={reduceMotion ? { duration: 0 } : springIndicator}
+                        className="absolute inset-0 rounded-2xl bg-primary-light"
+                      />
                     )}
-                  >
-                    <Icon active={isActive} />
+                    <span
+                      className={cn(
+                        'relative z-10 transition-colors duration-300 ease-out',
+                        isActive ? 'text-primary-dark' : 'text-muted',
+                      )}
+                    >
+                      <Icon active={isActive} />
+                    </span>
                   </div>
                   <span
                     className={cn(
                       'text-[11px] transition-colors duration-200',
-                      isActive ? 'font-semibold text-primary' : 'font-normal text-muted',
+                      isActive ? 'font-semibold text-primary-dark' : 'font-normal text-muted',
                     )}
                   >
                     {label}
                   </span>
-                </div>
+                </motion.div>
               )
             }
           </NavLink>

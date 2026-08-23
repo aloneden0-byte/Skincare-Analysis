@@ -50,7 +50,7 @@ export function ScoreBreakdown({
       )}
 
       {highIrritantWarning && (
-        <p className="max-w-xs text-xs text-amber-700">
+        <p className="max-w-xs text-xs text-[#a97c12]">
           ⚠ המוצר מכיל רכיב עם פוטנציאל גירוי גבוה בריכוז משמעותי — כדאי לשים לב אם יש רגישות עורית.
         </p>
       )}

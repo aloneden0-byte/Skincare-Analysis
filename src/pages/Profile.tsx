@@ -28,7 +28,7 @@ export function Profile() {
   const initial = getDisplayName(user).trim().charAt(0).toUpperCase() || '?'
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="flex flex-col gap-6">
       <h1 className="text-xl font-bold text-ink">פרופיל אישי</h1>
 
       <Card className="flex flex-col items-center gap-3 text-center">
@@ -47,7 +47,7 @@ export function Profile() {
             setName(e.target.value)
             setSaved(false)
           }}
-          className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+          className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
         />
       </Card>
 

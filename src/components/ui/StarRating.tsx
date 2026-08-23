@@ -12,7 +12,7 @@ export function StarRating({ value, max = 5 }: StarRatingProps) {
           viewBox="0 0 20 20"
           width={16}
           height={16}
-          fill={i < Math.round(value) ? '#f59e0b' : '#e5e0f5'}
+          fill={i < Math.round(value) ? 'var(--color-sun)' : 'var(--color-border)'}
         >
           <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1.99 5.79L10 14.9l-5.2 2.61.99-5.79-4.21-4.1 5.82-.85z" />
         </svg>

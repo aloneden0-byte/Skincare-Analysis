@@ -6,9 +6,9 @@ interface PillButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<string, string> = {
-  primary: 'bg-primary text-white hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/30',
-  secondary: 'bg-primary-light text-primary hover:bg-primary/20',
-  ghost: 'bg-transparent text-ink border border-muted/30 hover:bg-black/5',
+  primary: 'bg-primary text-white shadow-float hover:bg-primary-dark',
+  secondary: 'bg-primary-light text-primary-dark hover:bg-primary/20',
+  ghost: 'bg-transparent text-ink border border-border hover:bg-black/5',
 }
 
 export function PillButton({ variant = 'primary', className, disabled, ...props }: PillButtonProps) {

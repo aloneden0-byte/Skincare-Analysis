@@ -11,7 +11,7 @@ function Row({ name, reason, impact }: { name: string; reason: string; impact: n
         <p className="truncate text-xs text-muted">{reason}</p>
       </div>
       <span
-        className={`shrink-0 text-sm font-bold ${positive ? 'text-mint' : 'text-amber-600'}`}
+        className={`shrink-0 text-sm font-bold ${positive ? 'text-mint' : 'text-[#c9971f]'}`}
         dir="ltr"
       >
         {positive ? '+' : ''}
@@ -49,7 +49,7 @@ export function ScoreExplanation({ explanation }: { explanation: Explanation }) 
 
       {hurting.length > 0 && (
         <div>
-          <div className="mb-1 flex items-center gap-2 text-sm text-amber-600">
+          <div className="mb-1 flex items-center gap-2 text-sm text-[#c9971f]">
             <TrendingDown size={16} />
             <span className="font-medium">מוריד את הציון</span>
           </div>

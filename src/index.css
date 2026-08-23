@@ -16,63 +16,80 @@
  * favor of the app's own lavender/purple palette).
  */
 @theme {
-  --color-background: #f3f0fc;
-  --color-foreground: #2b2340;
+  --color-background: #f3f7ee;
+  --color-foreground: #2b3328;
   --color-surface: #ffffff;
   --color-card: #ffffff;
-  --color-card-foreground: #2b2340;
+  --color-card-foreground: #2b3328;
   --color-popover: #ffffff;
-  --color-popover-foreground: #2b2340;
+  --color-popover-foreground: #2b3328;
 
-  --color-primary: #7c5cfc;
+  --color-primary: #7bc950;
   --color-primary-foreground: #ffffff;
-  --color-primary-dark: #6d4fe0;
-  --color-primary-light: #ede7fd;
+  --color-primary-dark: #6ab240;
+  --color-primary-light: #e8f6da;
 
-  --color-secondary: #ede7fd;
-  --color-secondary-foreground: #7c5cfc;
+  --color-secondary: #e8f6da;
+  --color-secondary-foreground: #6ab240;
 
-  --color-accent: #8b5cf6;
+  --color-accent: #8fd14f;
   --color-accent-foreground: #ffffff;
 
-  --color-muted: #9b95b5;
-  --color-muted-foreground: #9b95b5;
+  --color-muted: #8a9488;
+  --color-muted-foreground: #8a9488;
 
-  --color-destructive: #e11d48;
+  --color-destructive: #e05252;
   --color-destructive-foreground: #ffffff;
 
-  /* Soft pastel accents for dashboard-style stat tiles (morning/sun,
-     evening/moon), alongside the purple brand color. */
-  --color-sun: #f59e0b;
-  --color-sun-light: #fef3d9;
-  --color-moon: #6366f1;
-  --color-moon-light: #e6e5fd;
-  --color-mint: #10b981;
-  --color-mint-light: #d7f7ea;
+  /* Pastel accents for the dashboard-style stat tiles. Each tile in the
+     design gets its own hue rather than tints of the brand color, so these
+     are a real part of the palette, not decoration: sun/moon carry the
+     morning/evening routine semantics, and blush/sky/lime fill out the
+     multi-colored tile block. */
+  --color-sun: #f6c445;
+  --color-sun-light: #fdf0c9;
+  --color-moon: #7aa5e8;
+  --color-moon-light: #dde9fb;
+  --color-mint: #4fc3a1;
+  --color-mint-light: #d6f2e8;
+  --color-blush: #f5919e;
+  --color-blush-light: #fcdde2;
+  --color-sky: #5bb8e8;
+  --color-sky-light: #d6ecfa;
+  --color-lime: #a5dc72;
+  --color-lime-light: #eaf7d8;
 
-  --color-border: #e5e0f5;
-  --color-input: #e5e0f5;
-  --color-ring: #7c5cfc;
+  /* Score-ring tones. Deliberately kept semantic (good / medium / weak)
+     rather than collapsed into brand green, since the color is carrying
+     real information — but softened to pastel so they sit inside this
+     palette instead of shouting over it. */
+  --color-score-good: #5fbf6a;
+  --color-score-mid: #f2b33d;
+  --color-score-low: #ee8080;
 
-  --color-ink: #2b2340;
+  --color-border: #e4ebdf;
+  --color-input: #e4ebdf;
+  --color-ring: #7bc950;
 
-  --color-chart-1: #7c5cfc;
-  --color-chart-2: #8b5cf6;
-  --color-chart-3: #ede7fd;
-  --color-chart-4: #6d4fe0;
-  --color-chart-5: #9b95b5;
+  --color-ink: #2b3328;
+
+  --color-chart-1: #7bc950;
+  --color-chart-2: #4fc3a1;
+  --color-chart-3: #f6c445;
+  --color-chart-4: #5bb8e8;
+  --color-chart-5: #f5919e;
 
   --color-sidebar: #ffffff;
-  --color-sidebar-foreground: #2b2340;
-  --color-sidebar-primary: #7c5cfc;
+  --color-sidebar-foreground: #2b3328;
+  --color-sidebar-primary: #7bc950;
   --color-sidebar-primary-foreground: #ffffff;
-  --color-sidebar-accent: #ede7fd;
-  --color-sidebar-accent-foreground: #7c5cfc;
-  --color-sidebar-border: #e5e0f5;
-  --color-sidebar-ring: #7c5cfc;
+  --color-sidebar-accent: #e8f6da;
+  --color-sidebar-accent-foreground: #6ab240;
+  --color-sidebar-border: #e4ebdf;
+  --color-sidebar-ring: #7bc950;
 
   --radius: 0.85rem;
-  --radius-card: 1.75rem;
+  --radius-card: 2rem;
   --radius-pill: 9999px;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -82,8 +99,13 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  --shadow-card: 0 4px 20px rgba(124, 92, 252, 0.1);
-  --shadow-nav: 0 -2px 16px rgba(43, 35, 64, 0.08);
+  /* The reference look is near-flat: cards are separated by wide, very low
+     opacity shadows rather than the tight dark drop shadows used before. */
+  --shadow-card: 0 6px 24px rgba(43, 51, 40, 0.06);
+  --shadow-nav: 0 6px 28px rgba(43, 51, 40, 0.1);
+  --shadow-float: 0 10px 30px rgba(107, 178, 64, 0.28);
+
+  --gradient-hero: linear-gradient(135deg, #8fd14f 0%, #b5e272 100%);
 
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

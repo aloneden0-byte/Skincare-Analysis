@@ -56,7 +56,7 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
                 autoComplete="email"
               />
             </div>
@@ -67,7 +67,7 @@ export function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                className="w-full rounded-2xl border border-border px-4 py-2.5 outline-none focus:border-primary"
                 autoComplete="current-password"
               />
             </div>

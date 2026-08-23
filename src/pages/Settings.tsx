@@ -59,7 +59,7 @@ export function Settings() {
   if (loading) return <LoadingSpinner label="טוען..." />
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="flex flex-col gap-6">
       <h1 className="text-xl font-bold text-ink">הגדרות</h1>
 
       <Card>

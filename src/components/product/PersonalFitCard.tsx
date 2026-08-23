@@ -55,7 +55,7 @@ export function PersonalFitCard({ fit }: { fit: PersonalFitResult }) {
               {f.kind === 'positive' ? (
                 <Check size={16} className="mt-0.5 shrink-0 text-mint" />
               ) : (
-                <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600" />
+                <AlertTriangle size={16} className="mt-0.5 shrink-0 text-[#c9971f]" />
               )}
               <span className="text-ink/80">
                 <span className="font-medium text-ink">{f.ingredientName}</span> — {f.detail}
