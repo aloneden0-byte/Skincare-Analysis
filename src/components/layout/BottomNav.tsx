@@ -110,7 +110,7 @@ const links = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface shadow-nav">
+    <nav className="fixed inset-x-0 bottom-0 z-20 rounded-t-3xl border-t border-border bg-surface shadow-nav">
       <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
         {links.map(({ to, label, icon: Icon, center }) => (
           <NavLink key={to} to={to} className="flex flex-col items-center gap-1">
