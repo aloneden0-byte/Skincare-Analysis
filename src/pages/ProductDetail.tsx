@@ -92,7 +92,7 @@ export function ProductDetail() {
   )
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <Badge tone="primary">{categoryLabel}</Badge>
         <h1 className="mt-2 text-xl font-bold text-ink">{product.name ?? 'מוצר סרוק'}</h1>

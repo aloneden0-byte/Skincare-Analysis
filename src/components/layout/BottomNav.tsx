@@ -44,14 +44,12 @@ export function BottomNav() {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 rounded-2xl px-3 py-1.5 text-xs transition-colors ${
+              `flex flex-col items-center gap-1 rounded-2xl px-3 py-1.5 text-xs transition-all duration-150 active:scale-90 ${
                 center
-                  ? isActive
-                    ? 'bg-primary text-white -mt-6 rounded-full p-3 shadow-card'
-                    : 'bg-primary text-white -mt-6 rounded-full p-3 shadow-card'
+                  ? 'bg-primary text-white -mt-6 rounded-full p-3 shadow-card hover:scale-105'
                   : isActive
-                    ? 'text-primary'
-                    : 'text-muted'
+                    ? 'text-primary scale-110'
+                    : 'text-muted hover:text-primary/70'
               }`
             }
           >

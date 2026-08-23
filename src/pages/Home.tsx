@@ -36,7 +36,7 @@ export function Home() {
   }, [user])
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <p className="text-sm text-muted">שלום,</p>
         <h1 className="text-xl font-bold text-ink">{user?.email}</h1>

@@ -21,7 +21,10 @@ export function IngredientRow({
   position: number
 }) {
   return (
-    <div className="flex flex-col gap-1.5 border-b border-muted/10 py-3 last:border-0">
+    <div
+      className="flex flex-col gap-1.5 border-b border-muted/10 py-3 last:border-0 animate-in fade-in slide-in-from-bottom-1"
+      style={{ animationDelay: `${Math.min(position * 40, 400)}ms`, animationDuration: '300ms', animationFillMode: 'backwards' }}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-baseline gap-2">
           <span className="text-xs text-muted">{position + 1}</span>

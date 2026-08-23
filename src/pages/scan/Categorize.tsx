@@ -38,7 +38,7 @@ export function Categorize() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <h1 className="text-xl font-bold text-ink">איזה סוג מוצר זה?</h1>
         <p className="mt-1 text-sm text-muted">הבחירה משפיעה על אופן חישוב הציון</p>
@@ -51,9 +51,9 @@ export function Categorize() {
               key={value}
               type="button"
               onClick={() => setCategory(value as ProductCategory)}
-              className={`rounded-pill px-4 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-pill px-4 py-2 text-sm font-medium transition-all duration-150 hover:scale-105 active:scale-95 ${
                 category === value
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-white shadow-md shadow-primary/30'
                   : 'bg-primary-light text-primary hover:bg-primary/20'
               }`}
             >

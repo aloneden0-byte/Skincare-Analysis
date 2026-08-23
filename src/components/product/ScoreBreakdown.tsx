@@ -26,8 +26,13 @@ export function ScoreBreakdown({
         <div className="flex flex-col items-center gap-2">
           <p className="text-sm text-muted">מתאים במיוחד ל:</p>
           <div className="flex flex-wrap justify-center gap-2">
-            {skinFit.map((s) => (
-              <Badge key={s.tag} tone="primary">
+            {skinFit.map((s, i) => (
+              <Badge
+                key={s.tag}
+                tone="primary"
+                className="animate-in fade-in zoom-in-75"
+                style={{ animationDelay: `${300 + i * 100}ms`, animationDuration: '300ms', animationFillMode: 'backwards' }}
+              >
                 {SKIN_TYPE_LABELS[s.tag] ?? s.tag}
               </Badge>
             ))}

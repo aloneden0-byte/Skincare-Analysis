@@ -45,7 +45,7 @@ export function Routines() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <h1 className="text-xl font-bold text-ink">שגרות הטיפוח שלי</h1>
 
       <div className="flex gap-2 rounded-pill bg-primary-light p-1">
@@ -54,8 +54,8 @@ export function Routines() {
             key={tab.type}
             type="button"
             onClick={() => setActiveTab(tab.type)}
-            className={`flex-1 rounded-pill py-2 text-sm font-medium transition-colors ${
-              activeTab === tab.type ? 'bg-primary text-white' : 'text-primary'
+            className={`flex-1 rounded-pill py-2 text-sm font-medium transition-all duration-150 active:scale-95 ${
+              activeTab === tab.type ? 'bg-primary text-white shadow-md shadow-primary/30' : 'text-primary hover:bg-primary/10'
             }`}
           >
             {tab.label}
