@@ -8,6 +8,7 @@ import { PillButton } from '@/components/ui/PillButton'
 export function Register() {
   const { user, loading: sessionLoading } = useSession()
   const navigate = useNavigate()
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +30,11 @@ export function Register() {
     }
 
     setSubmitting(true)
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { display_name: displayName.trim() } },
+    })
     setSubmitting(false)
 
     if (error) {
@@ -51,6 +56,18 @@ export function Register() {
         <p className="mb-6 text-center text-sm text-muted">יצירת חשבון חדש</p>
         <Card>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink">שם</label>
+              <input
+                type="text"
+                required
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="w-full rounded-2xl border border-muted/30 px-4 py-2.5 outline-none focus:border-primary"
+                autoComplete="name"
+                placeholder="איך נקרא לכם?"
+              />
+            </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-ink">אימייל</label>
               <input

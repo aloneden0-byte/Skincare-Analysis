@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
 import { ShimmerButton } from '@/components/ui/shimmer-button'
-import { useSession } from '@/lib/auth/useSession'
+import { useSession, getDisplayName } from '@/lib/auth/useSession'
 import { getRoutine, getRoutineItems } from '@/lib/data/routines'
 
 export function Home() {
@@ -39,7 +39,7 @@ export function Home() {
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <p className="text-sm text-muted">שלום,</p>
-        <h1 className="text-xl font-bold text-ink">{user?.email}</h1>
+        <h1 className="text-xl font-bold text-ink">{getDisplayName(user)}</h1>
       </div>
 
       <Card className="flex flex-col items-center gap-4 bg-primary text-white">
