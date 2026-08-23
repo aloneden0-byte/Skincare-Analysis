@@ -90,7 +90,7 @@ export function ProductDetail() {
   }
 
   const categoryLabel = PRODUCT_CATEGORIES.find((c) => c.value === product.category)?.label
-  const { highIrritantWarning } = computeOverallScore(
+  const { highIrritantWarning, dataConfidence } = computeOverallScore(
     ingredients.map((i) => i.ingredient),
     product.category,
   )
@@ -107,6 +107,7 @@ export function ProductDetail() {
           score={product.overall_score ?? 50}
           skinFit={skinFit}
           highIrritantWarning={highIrritantWarning}
+          dataConfidence={dataConfidence}
         />
       </Card>
 

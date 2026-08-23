@@ -8,14 +8,23 @@ function scoreLabel(score: number) {
   return 'שווה לשקול חלופה'
 }
 
+// Below this share of the formula backed by real ingredient research, the
+// score is presented as provisional rather than authoritative — mirrors
+// EWG Skin Deep's practice of publishing a "data availability" rating
+// alongside its hazard score, since a score built mostly from still-unrated
+// placeholders shouldn't read as equally confident as a fully-researched one.
+const LOW_CONFIDENCE_THRESHOLD = 0.7
+
 export function ScoreBreakdown({
   score,
   skinFit,
   highIrritantWarning,
+  dataConfidence,
 }: {
   score: number
   skinFit: SkinFitResult[]
   highIrritantWarning: boolean
+  dataConfidence: number
 }) {
   return (
     <div className="flex flex-col items-center gap-4 py-2 text-center">
@@ -43,6 +52,12 @@ export function ScoreBreakdown({
       {highIrritantWarning && (
         <p className="max-w-xs text-xs text-amber-700">
           ⚠ המוצר מכיל רכיב עם פוטנציאל גירוי גבוה בריכוז משמעותי — כדאי לשים לב אם יש רגישות עורית.
+        </p>
+      )}
+
+      {dataConfidence < LOW_CONFIDENCE_THRESHOLD && (
+        <p className="max-w-xs text-xs text-muted">
+          ⓘ חלק מהרכיבים במוצר עדיין לא נחקרו לעומק — הציון עשוי להתעדכן ככל שהמידע עליהם יתמלא.
         </p>
       )}
     </div>
