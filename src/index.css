@@ -1,23 +1,80 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+/*
+ * All design tokens live in one @theme block with literal values (no
+ * :root/.dark indirection layer) — this app has no dark-mode toggle, and a
+ * single source of truth avoids the classic shadcn-init footgun where a
+ * later @theme block silently overrides an earlier same-named token
+ * (e.g. --color-primary/--color-background/--color-muted all collided
+ * with shadcn's generated defaults here and were reconciled below in
+ * favor of the app's own lavender/purple palette).
+ */
 @theme {
   --color-background: #f3f0fc;
+  --color-foreground: #2b2340;
   --color-surface: #ffffff;
+  --color-card: #ffffff;
+  --color-card-foreground: #2b2340;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #2b2340;
+
   --color-primary: #7c5cfc;
+  --color-primary-foreground: #ffffff;
   --color-primary-dark: #6d4fe0;
   --color-primary-light: #ede7fd;
+
+  --color-secondary: #ede7fd;
+  --color-secondary-foreground: #7c5cfc;
+
   --color-accent: #8b5cf6;
+  --color-accent-foreground: #ffffff;
+
   --color-muted: #9b95b5;
+  --color-muted-foreground: #9b95b5;
+
+  --color-destructive: #e11d48;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e5e0f5;
+  --color-input: #e5e0f5;
+  --color-ring: #7c5cfc;
+
   --color-ink: #2b2340;
 
+  --color-chart-1: #7c5cfc;
+  --color-chart-2: #8b5cf6;
+  --color-chart-3: #ede7fd;
+  --color-chart-4: #6d4fe0;
+  --color-chart-5: #9b95b5;
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-foreground: #2b2340;
+  --color-sidebar-primary: #7c5cfc;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #ede7fd;
+  --color-sidebar-accent-foreground: #7c5cfc;
+  --color-sidebar-border: #e5e0f5;
+  --color-sidebar-ring: #7c5cfc;
+
+  --radius: 0.85rem;
   --radius-card: 1.5rem;
   --radius-pill: 9999px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
   --shadow-card: 0 4px 20px rgba(124, 92, 252, 0.1);
   --shadow-nav: 0 -2px 16px rgba(43, 35, 64, 0.08);
 
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: var(--font-sans);
 }
 
 html,
@@ -35,4 +92,10 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 }
