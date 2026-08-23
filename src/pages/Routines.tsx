@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSession } from '@/lib/auth/useSession'
 import { getRoutine, getRoutineItems, removeRoutineItem, reorderRoutineItems } from '@/lib/data/routines'
+import { getIngredientsForProducts } from '@/lib/data/products'
 import { RoutineList, type RoutineListItem } from '@/components/routines/RoutineList'
+import { RoutineFindings } from '@/components/routines/RoutineFindings'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { analyzeRoutine, type RoutineFinding } from '@/lib/scoring/routine-analysis'
 import type { RoutineType } from '@/types'
 
 const TABS: { type: RoutineType; label: string }[] = [
@@ -14,6 +17,7 @@ export function Routines() {
   const { user } = useSession()
   const [activeTab, setActiveTab] = useState<RoutineType>('morning')
   const [items, setItems] = useState<RoutineListItem[]>([])
+  const [findings, setFindings] = useState<RoutineFinding[]>([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
@@ -22,11 +26,25 @@ export function Routines() {
     const routine = await getRoutine(user.id, activeTab)
     if (!routine) {
       setItems([])
+      setFindings([])
       setLoading(false)
       return
     }
     const routineItems = await getRoutineItems(routine.id)
     setItems(routineItems.map((ri) => ({ id: ri.id, product: ri.product })))
+
+    const ingredientsByProduct = await getIngredientsForProducts(
+      routineItems.map((ri) => ri.product_id),
+    )
+    setFindings(
+      analyzeRoutine(
+        activeTab,
+        routineItems.map((ri) => ({
+          product: ri.product,
+          ingredients: ingredientsByProduct.get(ri.product_id) ?? [],
+        })),
+      ),
+    )
     setLoading(false)
   }, [user, activeTab])
 
@@ -66,7 +84,10 @@ export function Routines() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <RoutineList items={items} onReorder={handleReorder} onRemove={handleRemove} />
+        <>
+          <RoutineList items={items} onReorder={handleReorder} onRemove={handleRemove} />
+          <RoutineFindings findings={findings} isEmpty={items.length === 0} />
+        </>
       )}
     </div>
   )

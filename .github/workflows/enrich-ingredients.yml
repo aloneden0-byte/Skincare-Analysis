@@ -22,7 +22,7 @@ jobs:
 
       - run: npm ci
 
-      - run: node scripts/enrich-ingredients.mjs
+      - run: npx tsx scripts/enrich-ingredients.ts
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

@@ -14,13 +14,20 @@
  * (default 30 — keeps each run comfortably inside the Gemini free tier; a
  * backlog beyond that is picked up across subsequent scheduled/manual runs).
  *
- * The scoring logic below (position weight, category profile, base score)
- * is a plain-JS mirror of src/lib/scoring/* — this script runs standalone
- * via `node`, not through the Vite/TS build, so it can't import those
- * directly. Keep the two in sync when the formula changes.
+ * This file is TypeScript and run through tsx specifically so it can import
+ * the app's real scoring modules. It previously carried a hand-maintained
+ * JavaScript copy of the position weighting, category profiles and scoring
+ * formulas, which drifted from the originals every single time the formula
+ * changed — meaning the scores this agent wrote back to the database
+ * disagreed with the ones the app computed in the browser for the same
+ * product. Importing the real implementation makes that class of bug
+ * impossible rather than merely unlikely.
  */
 import { createClient } from '@supabase/supabase-js'
 import { config } from 'dotenv'
+import { computeOverallScore } from '../src/lib/scoring/product-score'
+import { computeSkinFit } from '../src/lib/scoring/skin-fit'
+import type { Ingredient, ProductCategory } from '../src/types'
 
 config()
 
@@ -30,103 +37,6 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash'
 const BATCH_LIMIT = Number(process.env.ENRICH_BATCH_LIMIT || 30)
 const REQUEST_DELAY_MS = 4000
-
-// --- scoring (mirrors src/lib/scoring/*) ------------------------------
-
-const NEUTRAL_SCORE = 5
-const SAFE_BASELINE = 6
-const DECAY_RATE = 0.15
-const WEIGHT_FLOOR = 0.05
-const LEAVE_ON = { comedogenicWeight: 1, irritancyWeight: 1 }
-const CATEGORY_PROFILES = {
-  cleanser: { comedogenicWeight: 0.3, irritancyWeight: 0.5 },
-  mask: { comedogenicWeight: 0.5, irritancyWeight: 0.6 },
-  serum: LEAVE_ON,
-  moisturizer: LEAVE_ON,
-  toner: LEAVE_ON,
-  sunscreen: LEAVE_ON,
-  exfoliant: LEAVE_ON,
-  eye_cream: LEAVE_ON,
-  oil: LEAVE_ON,
-  essence: LEAVE_ON,
-  other: LEAVE_ON,
-}
-const COMEDOGENIC_SENSITIVE_TAGS = ['acne-prone', 'oily']
-const IRRITANCY_SENSITIVE_TAGS = ['sensitive']
-const CONFLICT_PENALTY_FACTOR = 0.6
-const SKIN_FIT_TOP_N = 3
-const HIGH_IRRITANCY_THRESHOLD = 4
-const HIGH_IRRITANCY_POSITION_CUTOFF = 5
-const HIGH_IRRITANT_SCORE_CAP = 65
-
-function clampScore(value, min, max) {
-  return Math.max(min, Math.min(max, value))
-}
-
-function positionWeight(position) {
-  return Math.max(WEIGHT_FLOOR, 1 / (1 + position * DECAY_RATE))
-}
-
-function normalizedPositionWeights(count) {
-  const raw = Array.from({ length: count }, (_, i) => positionWeight(i))
-  const total = raw.reduce((sum, w) => sum + w, 0)
-  if (total === 0) return raw
-  return raw.map((w) => w / total)
-}
-
-function ingredientBaseScore(ingredient, category) {
-  if (!ingredient.is_rated || ingredient.benefit_score == null) return NEUTRAL_SCORE
-  const { comedogenicWeight, irritancyWeight } = CATEGORY_PROFILES[category] ?? LEAVE_ON
-  const baseline = SAFE_BASELINE + (ingredient.benefit_score / 10) * (10 - SAFE_BASELINE)
-  const comedogenicPenalty = (ingredient.comedogenic_rating ?? 0) * comedogenicWeight
-  const irritancyPenalty = (ingredient.irritancy_rating ?? 0) * irritancyWeight
-  return clampScore(baseline - comedogenicPenalty - irritancyPenalty, 0, 10)
-}
-
-function computeOverallScore(ingredients, category) {
-  if (ingredients.length === 0) return 50
-  const weights = normalizedPositionWeights(ingredients.length)
-  const weightedSum = ingredients.reduce(
-    (sum, ingredient, i) => sum + ingredientBaseScore(ingredient, category) * weights[i],
-    0,
-  )
-  const { irritancyWeight } = CATEGORY_PROFILES[category] ?? LEAVE_ON
-  const highIrritantWarning =
-    irritancyWeight >= 1 &&
-    ingredients
-      .slice(0, HIGH_IRRITANCY_POSITION_CUTOFF)
-      .some((ing) => (ing.irritancy_rating ?? 0) >= HIGH_IRRITANCY_THRESHOLD)
-  const rawScore = Math.round((weightedSum / 10) * 100)
-  return highIrritantWarning ? Math.min(rawScore, HIGH_IRRITANT_SCORE_CAP) : rawScore
-}
-
-function computeSkinFit(ingredients) {
-  if (ingredients.length === 0) return []
-  const weights = normalizedPositionWeights(ingredients.length)
-  const rawScores = new Map()
-
-  for (const tag of SKIN_TAGS) {
-    let score = 0
-    ingredients.forEach((ingredient, i) => {
-      const weight = weights[i]
-      const benefit = ingredient.benefit_score ?? 5
-      if ((ingredient.skin_type_fit ?? []).includes(tag)) score += weight * benefit
-      if (COMEDOGENIC_SENSITIVE_TAGS.includes(tag)) {
-        score -= weight * (ingredient.comedogenic_rating ?? 0) * CONFLICT_PENALTY_FACTOR
-      }
-      if (IRRITANCY_SENSITIVE_TAGS.includes(tag)) {
-        score -= weight * (ingredient.irritancy_rating ?? 0) * CONFLICT_PENALTY_FACTOR
-      }
-    })
-    rawScores.set(tag, clampScore(score, 0, 10))
-  }
-
-  return Array.from(rawScores.entries())
-    .map(([tag, score]) => ({ tag, confidence: score / 10 }))
-    .filter((r) => r.confidence > 0)
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, SKIN_FIT_TOP_N)
-}
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY || !GEMINI_API_KEY) {
   console.error('Missing required env: VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY')
@@ -157,12 +67,23 @@ const responseSchema = {
   required: ['category', 'comedogenic_rating', 'irritancy_rating', 'benefit_score', 'skin_type_fit', 'description'],
 }
 
-function clamp(n, min, max) {
+interface ResearchResult {
+  inci_name?: string | null
+  aliases?: unknown
+  category?: string
+  comedogenic_rating?: unknown
+  irritancy_rating?: unknown
+  benefit_score?: unknown
+  skin_type_fit?: unknown
+  description?: unknown
+}
+
+function clamp(n: unknown, min: number, max: number): number {
   const v = Math.round(Number(n))
   return Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : min
 }
 
-async function researchIngredient(name) {
+async function researchIngredient(name: string): Promise<ResearchResult> {
   const prompt = `You are a cosmetic chemistry reference assistant. For the cosmetic/skincare ingredient "${name}" (an INCI or common name that may include OCR noise from a scanned product label), provide:
 - inci_name: the formal INCI name if different from the given name, else null
 - aliases: other common names/spellings (lowercase, empty array if none)
@@ -194,7 +115,7 @@ If "${name}" doesn't look like a real cosmetic ingredient (e.g. garbled OCR text
   const data = await res.json()
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text
   if (!text) throw new Error('Gemini returned no content')
-  return JSON.parse(text)
+  return JSON.parse(text) as ResearchResult
 }
 
 /**
@@ -205,8 +126,10 @@ If "${name}" doesn't look like a real cosmetic ingredient (e.g. garbled OCR text
  * products that were scanned before that data existed, instead of leaving
  * them stuck with whatever score was cached at scan time.
  */
-async function rescoreAllProducts() {
-  const { data: products, error: productsError } = await supabase.from('products').select('id, category')
+async function rescoreAllProducts(): Promise<void> {
+  const { data: products, error: productsError } = await supabase
+    .from('products')
+    .select('id, category')
   if (productsError) {
     console.error('Failed to fetch products for rescoring:', productsError.message)
     return
@@ -225,17 +148,19 @@ async function rescoreAllProducts() {
     return
   }
 
-  const byProduct = new Map()
+  const byProduct = new Map<string, Ingredient[]>()
   for (const row of rows ?? []) {
-    if (!row.ingredient) continue
-    if (!byProduct.has(row.product_id)) byProduct.set(row.product_id, [])
-    byProduct.get(row.product_id).push(row.ingredient)
+    const ingredient = row.ingredient as unknown as Ingredient | null
+    if (!ingredient) continue
+    const list = byProduct.get(row.product_id) ?? []
+    list.push(ingredient)
+    byProduct.set(row.product_id, list)
   }
 
   let updated = 0
   for (const product of products) {
     const ingredients = byProduct.get(product.id) ?? []
-    const overallScore = computeOverallScore(ingredients, product.category)
+    const { overallScore } = computeOverallScore(ingredients, product.category as ProductCategory)
 
     const { error: updateError } = await supabase
       .from('products')
@@ -250,7 +175,12 @@ async function rescoreAllProducts() {
     const skinFit = computeSkinFit(ingredients)
     if (skinFit.length > 0) {
       await supabase.from('skin_fit_results').insert(
-        skinFit.map((s, i) => ({ product_id: product.id, tag: s.tag, rank: i + 1, confidence: s.confidence })),
+        skinFit.map((s, i) => ({
+          product_id: product.id,
+          tag: s.tag,
+          rank: i + 1,
+          confidence: s.confidence,
+        })),
       )
     }
 
@@ -260,7 +190,7 @@ async function rescoreAllProducts() {
   console.log(`Rescored ${updated} product(s).`)
 }
 
-async function main() {
+async function main(): Promise<void> {
   const { data: unrated, error } = await supabase
     .from('ingredients')
     .select('id, canonical_name')
@@ -288,13 +218,15 @@ async function main() {
           .from('ingredients')
           .update({
             inci_name: result.inci_name || null,
-            aliases: Array.isArray(result.aliases) ? result.aliases.map((a) => String(a).toLowerCase()) : [],
-            category: CATEGORIES.includes(result.category) ? result.category : 'other',
+            aliases: Array.isArray(result.aliases)
+              ? result.aliases.map((a) => String(a).toLowerCase())
+              : [],
+            category: CATEGORIES.includes(result.category ?? '') ? result.category : 'other',
             comedogenic_rating: clamp(result.comedogenic_rating, 0, 5),
             irritancy_rating: clamp(result.irritancy_rating, 0, 5),
             benefit_score: clamp(result.benefit_score, 0, 10),
             skin_type_fit: Array.isArray(result.skin_type_fit)
-              ? result.skin_type_fit.filter((t) => SKIN_TAGS.includes(t))
+              ? result.skin_type_fit.filter((t) => SKIN_TAGS.includes(String(t)))
               : [],
             description: String(result.description || '').slice(0, 500),
             is_rated: true,
@@ -307,7 +239,7 @@ async function main() {
         console.log(`✓ ${ingredient.canonical_name}`)
         succeeded++
       } catch (err) {
-        console.error(`✗ ${ingredient.canonical_name}: ${err.message}`)
+        console.error(`✗ ${ingredient.canonical_name}: ${(err as Error).message}`)
         failed++
       }
 
