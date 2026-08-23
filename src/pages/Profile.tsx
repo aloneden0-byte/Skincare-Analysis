@@ -59,7 +59,7 @@ export function Profile() {
   if (loading) return <LoadingSpinner label="טוען..." />
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <h1 className="text-xl font-bold text-ink">פרופיל אישי</h1>
         <p className="mt-1 text-sm text-muted">{user?.email}</p>
@@ -76,8 +76,10 @@ export function Profile() {
                 setSkinType(t.value)
                 setSaved(false)
               }}
-              className={`rounded-pill px-4 py-2 text-sm font-medium transition-colors ${
-                skinType === t.value ? 'bg-primary text-white' : 'bg-primary-light text-primary'
+              className={`rounded-pill px-4 py-2 text-sm font-medium transition-all duration-150 hover:scale-105 active:scale-95 ${
+                skinType === t.value
+                  ? 'bg-primary text-white shadow-md shadow-primary/30'
+                  : 'bg-primary-light text-primary hover:bg-primary/20'
               }`}
             >
               {t.label}
@@ -94,8 +96,10 @@ export function Profile() {
               key={c.value}
               type="button"
               onClick={() => toggleConcern(c.value)}
-              className={`rounded-pill px-4 py-2 text-sm font-medium transition-colors ${
-                concerns.includes(c.value) ? 'bg-primary text-white' : 'bg-primary-light text-primary'
+              className={`rounded-pill px-4 py-2 text-sm font-medium transition-all duration-150 hover:scale-105 active:scale-95 ${
+                concerns.includes(c.value)
+                  ? 'bg-primary text-white shadow-md shadow-primary/30'
+                  : 'bg-primary-light text-primary hover:bg-primary/20'
               }`}
             >
               {c.label}

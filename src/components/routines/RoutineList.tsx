@@ -35,12 +35,12 @@ function SortableItem({ item, onRemove }: { item: RoutineListItem; onRemove: (id
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
     >
-      <Card className="mb-3 flex items-center gap-3">
+      <Card className="mb-3 flex items-center gap-3 transition-shadow hover:shadow-lg">
         <button
           type="button"
           {...attributes}
           {...listeners}
-          className="cursor-grab touch-none px-1 text-muted"
+          className="cursor-grab touch-none px-1 text-muted transition-colors hover:text-primary"
           aria-label="גרור לשינוי סדר"
         >
           ⠿
@@ -59,7 +59,7 @@ function SortableItem({ item, onRemove }: { item: RoutineListItem; onRemove: (id
         <button
           type="button"
           onClick={() => onRemove(item.id)}
-          className="px-2 text-muted hover:text-rose-600"
+          className="px-2 text-muted transition-all duration-150 hover:scale-110 hover:text-rose-600 active:scale-90"
           aria-label="הסרה מהשגרה"
         >
           ✕

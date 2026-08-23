@@ -46,7 +46,7 @@ export function Register() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm animate-in fade-in zoom-in-95 duration-300">
         <h1 className="mb-1 text-center text-2xl font-bold text-ink">שגרת טיפוח</h1>
         <p className="mb-6 text-center text-sm text-muted">יצירת חשבון חדש</p>
         <Card>

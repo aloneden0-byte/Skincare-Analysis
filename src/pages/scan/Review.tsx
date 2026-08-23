@@ -8,7 +8,7 @@ export function Review() {
   const { ocrText, setOcrText } = useScanFlow()
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div>
         <h1 className="text-xl font-bold text-ink">בדיקת רשימת הרכיבים</h1>
         <p className="mt-1 text-sm text-muted">
