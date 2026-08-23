@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '0 4 * * *' # daily at 04:00 UTC
   workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max unrated ingredients to research this run (default 30)'
+        required: false
 
 jobs:
   enrich:
@@ -23,3 +27,4 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ENRICH_BATCH_LIMIT: ${{ inputs.limit }}
